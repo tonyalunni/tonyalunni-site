@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:title" content="Cut reporting upkeep without losing what matters">
+<meta property="og:description" content="A playbook with a working model: interactive calculator, 80-report worked example and a free Excel scorecard. By Tony Alunni.">
+<meta property="og:image" content="https://tonyalunni.net/assets/og-reporting-playbook.png">
+<meta property="og:url" content="https://tonyalunni.net/reporting-playbook/">
+<meta name="twitter:card" content="summary_large_image">
+<title>Reporting Upkeep Playbook</title>
+<meta name="description" content="A playbook with a working model: how to cut reporting upkeep without losing decision support. Interactive calculator, 80-report worked example and a free Excel scorecard. By Tony Alunni.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: consulting exhibit pages. Midnight hero band, then white sections with numbered exhibits on navy rules; one bright blue for emphasis, light blues for supporting fills, amber only for the capacity result. */
+:root{
+  --bg:#FFFFFF; --surface:#F5F7FC; --ink:#0D1242; --ink-2:#2E3550; --muted:#5B6475; --rule:#D6D9E3; --rule-strong:#0D1242;
+  --accent:#2B47F0; --accent-text:#2B47F0; --sky:#BAD5F7; --pale:#E3ECFB; --mist:#E9EAF0; --grey:#A3A9BA; --amber:#FFBF3E; --on-accent:#FFFFFF;
+  --hero:#0D1242; --hero-ink:#FFFFFF; --hero-2:#C3C8DA; --hero-rule:#2B3270;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A0F2E; --surface:#111840; --ink:#EEF1FA; --ink-2:#C7CDE0; --muted:#8E96B4; --rule:#252D5A; --rule-strong:#C7CDE0;
+  --accent:#3D58F5; --accent-text:#8EA2FF; --sky:#3A4F8F; --pale:#1B2659; --mist:#1E2547; --grey:#58607E; --amber:#FFBF3E; --on-accent:#FFFFFF;
+  --hero:#060A22; --hero-ink:#FFFFFF; --hero-2:#B4BBD3; --hero-rule:#232A5C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A0F2E; --surface:#111840; --ink:#EEF1FA; --ink-2:#C7CDE0; --muted:#8E96B4; --rule:#252D5A; --rule-strong:#C7CDE0;
+  --accent:#3D58F5; --accent-text:#8EA2FF; --sky:#3A4F8F; --pale:#1B2659; --mist:#1E2547; --grey:#58607E; --amber:#FFBF3E; --on-accent:#FFFFFF;
+  --hero:#060A22; --hero-ink:#FFFFFF; --hero-2:#B4BBD3; --hero-rule:#232A5C; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.008em}
+p{margin:0}
+a{color:var(--accent-text)}
+:focus-visible{outline:3px solid var(--accent-text);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.num{font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:14px;flex-wrap:wrap}
+.brand{font-weight:600;color:var(--ink)} .brand span{color:var(--muted);font-weight:400}
+.nav{display:flex;gap:18px;flex-wrap:wrap;font-size:15px}
+.nav a{color:var(--ink-2);text-decoration:none} .nav a:hover{color:var(--accent-text)}
+
+/* hero */
+.hero{background:var(--hero);color:var(--hero-ink)}
+.hero .wrap{padding-block:56px 48px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:start}
+.eyebrow{font-size:13px;color:var(--sky)}
+.hero .eyebrow{color:#9DB4F5}
+.hero h1{font-size:clamp(38px,5.6vw,62px);line-height:1.04;margin:14px 0 18px;color:var(--hero-ink)}
+.hero .lead{color:var(--hero-2);font-size:19px;max-width:560px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px var(--f-body);padding:12px 18px;border:2px solid transparent;cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{border-color:#5B6AB0;color:var(--hero-ink);background:transparent}
+.btn.dark{background:var(--ink);color:var(--bg)}
+.units{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:5px;max-width:460px}
+.units i{display:block;aspect-ratio:1;border:1.5px solid #3A4280}
+.units i.on{background:#2B47F0;border-color:#2B47F0}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--hero-2);margin-top:12px}
+.legend b{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;margin-top:26px;border-top:1px solid var(--hero-rule)}
+.kpis>div{padding-top:18px;min-width:0}.kpis>div+div{padding-left:22px;border-left:1px solid var(--hero-rule)}
+.kpis .n{font-family:var(--f-display);font-weight:600;font-size:clamp(32px,3.6vw,46px);line-height:1;white-space:nowrap}
+.kpis .l{font-size:14px;color:var(--hero-2);margin-top:6px}
+.tag{display:inline-block;font-size:12px;padding:4px 8px;background:var(--pale);color:var(--accent-text)}
+.hero .tag{background:var(--hero-rule);color:var(--hero-2);margin-top:18px}
+
+/* sections */
+section.block{padding-block:64px 8px}
+.kicker{font-size:13px;color:var(--accent-text);margin-bottom:10px}
+section.block h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;max-width:820px}
+.dek{color:var(--ink-2);font-size:18px;max-width:700px;margin-top:12px}
+.exh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:30px;padding-bottom:8px;border-bottom:2px solid var(--rule-strong);font-size:14px;color:var(--muted)}
+.exh b{color:var(--ink);font-family:var(--f-mono);font-weight:500;letter-spacing:.06em;margin-right:6px}
+
+/* week bar */
+.week{margin-top:22px}
+.week .bar{display:flex;height:64px}
+.week .bar div{display:flex;align-items:center;padding:0 16px;font-weight:600;min-width:0;white-space:nowrap;overflow:hidden}
+.split{display:flex;height:40px;margin-top:8px;width:40%}
+.split div{display:flex;align-items:center;padding:0 10px;font-weight:600;font-size:15px}
+.week .notes{display:grid;grid-template-columns:40% 1fr;gap:20px;margin-top:10px;font-size:14px;color:var(--muted)}
+.week .notes b{color:var(--ink);display:block}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:24px;border-top:1px solid var(--rule)}
+.step{padding:22px 22px 22px 0;border-bottom:1px solid var(--rule);min-width:0}
+.step:not(:nth-child(3n+1)){padding-left:22px;border-left:1px solid var(--rule)}
+.step .i{font-family:var(--f-mono);font-size:13px;color:var(--accent-text)}
+.step h3{font-size:22px;margin:6px 0 6px}
+.step p{color:var(--ink-2);font-size:15.5px}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:36px;margin-top:24px}
+.presets{display:flex;gap:0;border:1.5px solid var(--ink);width:max-content;max-width:100%;flex-wrap:wrap}
+.presets button{font:500 14px var(--f-body);padding:9px 14px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.inputs{display:grid;gap:14px;margin-top:20px}
+.grp{font-size:12px;color:var(--muted);margin-top:8px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:4px 14px;align-items:center}
+.field label{font-size:15px;color:var(--ink-2)}
+.field input[type=number]{width:90px;font:500 15px var(--f-body);padding:6px 8px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);text-align:right}
+.field input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+.hint{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.warn{font-size:14px;color:#B4232A;margin-top:4px}
+.out{background:var(--surface);padding:26px;align-self:start;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.big div{min-width:0}
+.big .n{font-family:var(--f-display);font-weight:600;font-size:clamp(34px,4vw,46px);line-height:1}
+.big .l{font-size:13.5px;color:var(--muted);margin-top:4px}
+.hl{background:var(--amber);color:#0D1242;padding:0 6px}
+.cmp{margin-top:22px;display:grid;gap:10px}
+.cmp .row{display:grid;grid-template-columns:62px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:14px}
+.cmp .track{display:flex;height:26px;background:var(--bg)}
+.cmp .track div{height:100%}
+.facts{margin-top:20px;border-top:1px solid var(--rule);display:grid}
+.facts div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:15px}
+.facts span{color:var(--ink-2)}
+.note{font-size:13.5px;color:var(--muted);margin-top:12px}
+
+/* model */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.chips button{font:500 14px var(--f-body);padding:7px 12px;border:1.5px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.tablebox{overflow:auto;max-height:560px;margin-top:14px;border-top:2px solid var(--rule-strong)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14.5px}
+th{position:sticky;top:0;background:var(--bg);text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:10px 10px;border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap}
+th[aria-sort="ascending"]::after{content:" ▲"}th[aria-sort="descending"]::after{content:" ▼"}
+td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+td.r,th.r{text-align:right}
+.pill{display:inline-block;font-size:12.5px;font-weight:600;padding:2px 8px}
+.pill.Keep{background:var(--accent);color:var(--on-accent)}
+.pill.Merge{background:var(--sky);color:var(--ink)}
+.pill.Retire{background:var(--mist);color:var(--ink-2)}
+.usage{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;margin-top:26px;align-items:start}
+.usage svg{width:100%;height:auto;display:block}
+.stats{display:grid;border-top:1px solid var(--rule)}
+.stats div{padding:14px 0;border-bottom:1px solid var(--rule)}
+.stats .n{font-family:var(--f-display);font-weight:600;font-size:34px;line-height:1.1}
+.stats .l{font-size:14.5px;color:var(--ink-2)}
+
+/* catalog */
+.catalog{margin-top:22px;border:1.5px solid var(--ink)}
+.cat-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:16px 20px;border-top:1px solid var(--rule);align-items:start}
+.cat-row:first-child{border-top:0}
+.cat-row h3{font-family:var(--f-body);font-size:16px;font-weight:600;padding-top:4px}
+.cat-row h3 span{color:var(--muted);font-weight:400}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cat-chips span{font-size:14.5px;padding:6px 10px}
+.lv-Executive .cat-chips span{background:var(--accent);color:var(--on-accent)}
+.lv-Director .cat-chips span{background:var(--sky);color:var(--ink)}
+.lv-Manager .cat-chips span{background:var(--pale);color:var(--ink)}
+.lv-Analyst .cat-chips span{background:var(--mist);color:var(--ink)}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:24px}
+.rule{border-top:5px solid var(--ink);padding-top:12px;min-width:0}
+.rule.retire{border-top-color:var(--grey)}.rule.merge{border-top-color:var(--sky)}.rule.keep{border-top-color:var(--accent)}.rule.review{border-top-color:var(--amber)}
+.rule h3{font-family:var(--f-body);font-size:17px;font-weight:600;margin-bottom:6px}
+.rule p{font-size:15px;color:var(--ink-2)}
+.callout{background:var(--surface);padding:20px 24px;margin-top:22px;color:var(--ink-2)}
+.callout b{color:var(--ink)}
+
+/* download */
+.dl{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;margin-top:24px;align-items:center;background:var(--surface);padding:28px}
+.dl ul{margin:12px 0 0;padding-left:18px;color:var(--ink-2)}
+.sheet{border:1.5px solid var(--rule);background:var(--bg);font-size:12.5px;overflow:hidden}
+.sheet .h{background:#0D1242;color:#fff;display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;padding:6px 8px;font-weight:600}
+.sheet .r{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;padding:6px 8px;border-top:1px solid var(--rule)}
+.sheet .r span:last-child{font-weight:600}
+.dlmsg{font-size:14px;color:var(--muted);margin-top:10px;min-height:1.4em}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px;margin-top:22px}
+.about p+p{margin-top:12px}
+.contact{background:var(--surface);padding:22px;align-self:start}
+.contact code{font:15px var(--f-mono);background:var(--bg);padding:6px 10px;user-select:all;color:var(--ink);display:inline-block;margin:8px 8px 0 0;word-break:break-all}
+.copy{font:500 14px var(--f-body);padding:7px 12px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;margin-top:8px}
+footer{margin-top:72px;border-top:1px solid var(--rule)}
+footer .wrap{padding-block:22px 40px;font-size:13.5px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hero .wrap,.calc,.usage,.dl,.about{grid-template-columns:minmax(0,1fr)}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .step,.step:not(:nth-child(3n+1)){padding:18px 0;border-left:0}
+  .rules{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .out{position:static}
+  .split{width:60%}.week .notes{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  .rules{grid-template-columns:minmax(0,1fr)}
+  .cat-row{grid-template-columns:minmax(0,1fr);gap:8px}
+  .big{grid-template-columns:1fr 1fr}
+  .week .bar div{font-size:14px;padding:0 10px}
+}
+</style></head><body>
+
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="/" style="text-decoration:none">Tony Alunni <span>· Finance and Strategy</span></a>
+  <nav class="nav" aria-label="Sections"><a href="#approach">Approach</a><a href="#calculator">Calculator</a><a href="#model">Model</a><a href="#scorecard">Scorecard</a><a href="#about">About</a></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <p class="eyebrow mono">Playbook · Reporting operating model</p>
+    <h1>Cut reporting upkeep without losing what matters</h1>
+    <p class="lead">How to find what reporting really costs, decide which reports stay, and keep the count from growing back. Shown with a fully modeled example you can adjust.</p>
+    <div class="ctas"><a class="btn primary" href="#calculator">Try the calculator</a><a class="btn ghost" href="#scorecard">Get the free scorecard</a></div>
+    <span class="tag mono">Illustrative example</span>
+  </div>
+  <div>
+    <div class="units" id="units" aria-label="80 reports, 22 kept or rebuilt"></div>
+    <div class="legend"><span><b style="background:#2B47F0"></b>22 reports kept or rebuilt</span><span><b style="border:1.5px solid #6E76A8"></b>58 retired or merged</span></div>
+    <div class="kpis">
+      <div><div class="n num"><span style="color:#6E76A8">80</span> → 22</div><div class="l">reports, every critical decision still covered</div></div>
+      <div><div class="n num" style="color:var(--amber)">~35 hrs</div><div class="l">analyst hours a week freed (base case)</div></div>
+    </div>
+  </div>
+</div></div>
+
+<main class="wrap">
+
+<section class="block" id="why">
+  <p class="kicker mono">Why act</p>
+  <h2>Upkeep consumes 40% of the team's capacity</h2>
+  <p class="dek">In the example, a 5-analyst team spends two of every five hours keeping 80 reports running, before anyone builds anything new.</p>
+  <div class="exh"><span><b>EXHIBIT 1</b>Where a 200-hour week goes (5 analysts × 40 scheduled hours)</span><span class="tag mono">Illustrative</span></div>
+  <div class="week">
+    <div class="bar"><div style="width:40%;background:var(--accent);color:var(--on-accent)">Upkeep 80 hrs · 40%</div><div style="width:60%;background:var(--mist);color:var(--ink-2);font-weight:500">Other work 120 hrs</div></div>
+    <div class="split"><div style="width:30%;background:var(--ink);color:var(--bg)">24</div><div style="width:70%;background:var(--sky);color:var(--ink)">56</div></div>
+    <div class="notes"><p><b>Shared source fixes, 24 hrs</b>Fixed, whatever the report count</p><p><b>Per-report upkeep, 56 hrs = 80 reports × 0.7 hrs</b>Checks after breaks, fixes, user questions, small tweaks. This is the part that shrinks.</p></div>
+  </div>
+</section>
+
+<section class="block" id="approach">
+  <p class="kicker mono">The approach</p>
+  <h2>Six steps, from mapping the work to keeping it clean</h2>
+  <div class="steps">
+    <div class="step"><p class="i">STEP 1 · SET UP</p><h3>Agree decision rights</h3><p>A one-page charter: scope in and out, success measures, and who approves. Business leaders approve every retirement; the reporting lead recommends.</p></div>
+    <div class="step"><p class="i">STEP 2 · MAP THE WORK</p><h3>Find where time waits</h3><p>Requests in the example take 13 business days, but only 5 are work. One intake form and a 2-day acknowledgment target cut the waiting, not the build.</p></div>
+    <div class="step"><p class="i">STEP 3 · LISTEN AND MEASURE</p><h3>Pair voice with usage</h3><p>A questionnaire with a 2-week deadline, then follow-ups with leaders who did not reply and owners of reports no one named.</p></div>
+    <div class="step"><p class="i">STEP 4 · DECIDE</p><h3>Use explicit rules</h3><p>Keep, merge or retire each report by the same rules, with owner sign-off for anything critical and safeguards on every retirement.</p></div>
+    <div class="step"><p class="i">STEP 5 · REBUILD</p><h3>One entry point</h3><p>A catalog organized by who uses each report, one template, defined metrics and a named owner on every report.</p></div>
+    <div class="step"><p class="i">STEP 6 · SUSTAIN</p><h3>Gate what comes in</h3><p>Every new request passes a catalog check. A quarterly usage review flags reports for the owner to confirm or retire.</p></div>
+  </div>
+</section>
+
+<section class="block" id="calculator">
+  <p class="kicker mono">Calculator</p>
+  <h2>Model the capacity gain with your own assumptions</h2>
+  <p class="dek">It opens on the example's base case. Change any input and the results update. Shared fixes do not shrink; each merged report costs more to maintain than the ones it replaces.</p>
+  <div class="exh"><span><b>EXHIBIT 2</b>Weekly upkeep model</span><span class="tag mono">Illustrative</span></div>
+  <div class="calc">
+    <div>
+      <div class="presets" role="group" aria-label="Scenario">
+        <button type="button" id="p-cons" aria-pressed="false">Conservative</button><button type="button" id="p-base" aria-pressed="true">Base</button><button type="button" id="p-up" aria-pressed="false">Upside</button>
+      </div>
+      <div class="inputs" id="inputs"></div>
+      <p class="warn" id="warn" hidden></p>
+    </div>
+    <div class="out" aria-live="polite">
+      <div class="big">
+        <div><div class="n num"><span class="hl" id="o-freed">35</span></div><div class="l">hours a week freed</div></div>
+        <div><div class="n num" id="o-pay">10 wks</div><div class="l">capacity payback after launch</div></div>
+        <div><div class="n num" id="o-val">$105K</div><div class="l">a year of analyst time to redeploy</div></div>
+        <div><div class="n num" id="o-after">22</div><div class="l">reports after cleanup</div></div>
+      </div>
+      <div class="cmp" id="cmp"></div>
+      <div class="facts">
+        <div><span>Upkeep before</span><b class="num" id="o-before">80 hrs</b></div>
+        <div><span>Upkeep after</span><b class="num" id="o-afterh">45 hrs</b></div>
+        <div><span>Upkeep as share of team time, before → after</span><b class="num" id="o-share">40% → 23%</b></div>
+        <div><span>Analyst equivalents freed</span><b class="num" id="o-fte">0.9</b></div>
+        <div><span>Reports retired</span><b class="num" id="o-ret">32</b></div>
+      </div>
+      <p class="note">Capacity, not cash: freed hours go to analysis, not a budget cut. Payback counts weeks after launch to repay setup hours, excluding the project itself.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="model">
+  <p class="kicker mono">The worked example</p>
+  <h2>All 80 reports, scored by the same rules</h2>
+  <p class="dek">Usage is concentrated: a handful of reports carries most of the views, and a long tail is barely opened. Survey answers are self-reported, so they sit beside usage data, never in place of it.</p>
+  <div class="exh"><span><b>EXHIBIT 3</b>Cumulative share of report views, 80 reports ranked by use</span><span class="tag mono">Illustrative</span></div>
+  <div class="usage">
+    <div id="curve"></div>
+    <div class="stats">
+      <div><div class="n num" style="color:var(--accent-text)">84 of 140</div><p class="l">users answered a questionnaire with a 2-week deadline (60%)</p></div>
+      <div><div class="n num">20 of 20</div><p class="l">executives and directors covered, by survey or follow-up</p></div>
+      <div><div class="n num">12</div><p class="l">follow-ups: 6 leaders who did not reply, 6 owners of reports no one named</p></div>
+    </div>
+  </div>
+  <div class="exh"><span><b>EXHIBIT 4</b>Report inventory and decisions</span><span class="tag mono">Illustrative</span></div>
+  <div class="chips" role="group" aria-label="Filter by decision" id="chips"></div>
+  <div class="tablebox"><table id="tbl"><thead><tr>
+    <th data-k="0" class="r" aria-sort="ascending">Rank</th><th data-k="1">Report</th><th data-k="2">Level</th><th data-k="3">Owner</th><th data-k="4" class="r">Users, 90 days</th><th data-k="5" class="r">Views / month</th><th data-k="8">Decision</th><th data-k="9">Outcome</th>
+  </tr></thead><tbody></tbody></table></div>
+  <p class="note">Views count interactive use by named users over 90 days. Scheduled distributions and service accounts are excluded and reviewed separately. Click a column to sort.</p>
+</section>
+
+<section class="block" id="rules">
+  <p class="kicker mono">Decision rules</p>
+  <h2>Rules for speed, owner sign-off for anything critical</h2>
+  <div class="rules">
+    <div class="rule retire"><h3>Retire · 32</h3><p>Under 3 named users in 90 days, no scheduled distribution, and the owner confirms no control, regulatory or period-end use.</p></div>
+    <div class="rule review"><h3>Review with owner</h3><p>Low usage, but distributed on a schedule or critical. Never retired without the owner's sign-off.</p></div>
+    <div class="rule merge"><h3>Merge · 34 into 8</h3><p>Overlaps another report's core metrics and audience. Fold into one owned report.</p></div>
+    <div class="rule keep"><h3>Keep · 14</h3><p>Widely used, distinct and owned. Move to the standard template.</p></div>
+  </div>
+  <div class="callout"><b>Example judgment call.</b> A regional leader relies on a weekly regional view that duplicates the director report. Resolution: keep the regional cut as a filtered page inside the director report, approved by that leader and the report owner.</div>
+  <p class="note">Safeguards on every retirement: 2 weeks' notice to users, a 60-day archive, owner sign-off.</p>
+  <div class="exh"><span><b>EXHIBIT 5</b>The catalog after cleanup: 22 owned reports by primary audience</span><span class="tag mono">Illustrative</span></div>
+  <div class="catalog" id="catalog"></div>
+</section>
+
+<section class="block" id="scorecard">
+  <p class="kicker mono">Free tool</p>
+  <h2>Score your own reports</h2>
+  <div class="dl">
+    <div>
+      <p style="color:var(--ink-2)">An Excel scorecard that applies the same rules to your report list and estimates the hours you free up. Works in Excel, Google Sheets and Numbers.</p>
+      <ul><li>Report review: room for 300 reports, a suggested action that fills in automatically, and an owner-approval column. Incomplete rows are flagged, never counted.</li><li>Summary: potential savings from every suggestion, and approved savings from owner-approved actions only</li><li>Worked example: the 80 reports on this page, already scored, with its own fixed assumptions</li></ul>
+      <div class="ctas"><a class="btn dark" id="dl" href="Report_Review_Scorecard.xlsx" download>Download the scorecard (.xlsx)</a></div>
+      <p class="dlmsg" id="dlmsg"></p>
+    </div>
+    <div class="sheet" aria-hidden="true">
+      <div class="h"><span>Report</span><span>Users</span><span>Views</span><span>Action</span></div>
+      <div class="r"><span>Inventory</span><span>32</span><span>312</span><span style="color:var(--accent-text)">Keep</span></div>
+      <div class="r"><span>Weekly flash (v2)</span><span>9</span><span>41</span><span>Merge</span></div>
+      <div class="r"><span>Q2 promo tracker</span><span>1</span><span>3</span><span style="color:var(--muted)">Retire</span></div>
+      <div class="r"><span>Freight cost one-off</span><span>0</span><span>0</span><span style="color:var(--muted)">Retire</span></div>
+      <div class="r"><span>SLA tracker</span><span>7</span><span>28</span><span>Merge</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="about">
+  <p class="kicker mono">About</p>
+  <h2>Find the signal. Tell the story. Guide the decision.</h2>
+  <div class="about">
+    <div>
+      <p>I'm Tony Alunni, a finance and strategy professional based in South Florida. I've led reporting and analytics teams, partnered with business leaders on priorities, consolidated overlapping reports, and worked with IT on source-data issues. Before that, I spent more than a decade in FP&amp;A supporting an alternative investments platform: budgeting, forecasting, new-fund business cases and acquisition analysis.</p>
+      <p>The same approach on this page applies to management packs, budget reporting and recurring variance analysis. I'm open to senior FP&amp;A and analytics roles, and I take select project work through Alunni Finance &amp; Analytics.</p>
+      <p class="note">The company, figures and events in this playbook are illustrative. The approach is mine.</p>
+    </div>
+    <div class="contact">
+      <p style="font-weight:600">Get in touch</p>
+      <code id="email">aalunni1997@gmail.com</code><br>
+      <button class="copy" id="copy" type="button">Copy email</button>
+      <p style="margin-top:16px"><a class="btn dark" href="https://www.linkedin.com/in/tony-alunni/" target="_blank" rel="noopener">Connect on LinkedIn</a></p>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap"><span>© 2026 Tony Alunni · Alunni Finance &amp; Analytics · <a href="https://www.linkedin.com/in/tony-alunni/" target="_blank" rel="noopener">LinkedIn</a></span><span>Illustrative example. Figures are modeled, not measured.</span></div></footer>
+
+<script>
+const R = [[1,"Inventory","Analyst","Reporting analyst",32,312,"Yes","No","Keep","Inventory"],[2,"Forecast inputs","Analyst","Reporting analyst",19,312,"No","Yes","Keep","Forecast inputs"],[3,"Account detail","Manager","Reporting analyst",15,302,"No","No","Keep","Account detail"],[4,"Scheduling","Manager","Reporting analyst",26,231,"Yes","No","Keep","Scheduling"],[5,"Workforce","Director","Sales operations lead",15,217,"Yes","No","Keep","Workforce"],[6,"Pricing","Analyst","Reporting analyst",17,211,"Yes","No","Keep","Pricing"],[7,"Cost centers","Director","Sales operations lead",39,177,"No","No","Keep","Cost centers"],[8,"Data checks","Analyst","Reporting analyst",21,171,"Yes","Yes","Keep","Data checks"],[9,"Customers","Analyst","Reporting analyst",18,163,"No","No","Keep","Customers"],[10,"Products","Analyst","Reporting analyst",16,131,"Yes","No","Keep","Products"],[11,"Order flow","Manager","Reporting analyst",44,124,"Yes","No","Keep","Order flow"],[12,"Transactions","Analyst","Reporting analyst",14,92,"Yes","No","Keep","Transactions"],[13,"Quality","Manager","Reporting analyst",15,88,"No","No","Keep","Quality"],[14,"Request log","Analyst","Reporting analyst",39,85,"Yes","No","Keep","Request log"],[15,"BvA monthly (finance)","Manager","FP&A manager",4,60,"Yes","No","Merge","Budget vs. actual"],[16,"Service backlog","Director","Operations director",8,58,"No","No","Merge","Service levels"],[17,"Fulfillment scorecard","Executive","Operations director",11,57,"Yes","No","Merge","Operations scorecard"],[18,"Deal aging","Director","Sales operations lead",5,56,"No","No","Merge","Pipeline and bookings"],[19,"Margin by product (old)","Executive","Finance director",11,55,"No","No","Merge","Sales and margin"],[20,"BvA monthly (ops version)","Manager","FP&A manager",3,54,"No","No","Merge","Budget vs. actual"],[21,"Region East detail","Director","Sales operations lead",3,51,"No","No","Merge","Regional performance"],[22,"Bookings weekly","Director","Sales operations lead",10,49,"No","No","Merge","Pipeline and bookings"],[23,"Ops daily snapshot","Executive","Operations director",4,48,"No","No","Merge","Operations scorecard"],[24,"Gross margin bridge","Executive","Finance director",12,48,"Yes","No","Merge","Sales and margin"],[25,"Exec KPI tracker","Executive","Finance director",3,47,"Yes","No","Merge","Business performance summary"],[26,"Region West detail","Director","Sales operations lead",13,46,"No","No","Merge","Regional performance"],[27,"Rep activity summary","Manager","Operations manager",4,44,"Yes","No","Merge","Team performance"],[28,"SLA tracker","Director","Operations director",11,43,"No","No","Merge","Service levels"],[29,"Territory rollup","Director","Sales operations lead",6,43,"No","No","Merge","Regional performance"],[30,"Variance commentary pack","Manager","FP&A manager",10,38,"No","No","Merge","Budget vs. actual"],[31,"Monthly business review deck","Executive","Finance director",12,37,"Yes","No","Merge","Business performance summary"],[32,"Pipeline by stage","Director","Sales operations lead",10,35,"No","No","Merge","Pipeline and bookings"],[33,"Regional league table","Director","Sales operations lead",9,32,"No","No","Merge","Regional performance"],[34,"Sales vs. target weekly","Executive","Finance director",12,31,"No","No","Merge","Sales and margin"],[35,"Escalations log summary","Director","Operations director",12,31,"No","No","Merge","Service levels"],[36,"Team KPIs (copy)","Manager","Operations manager",10,30,"No","No","Merge","Team performance"],[37,"Board prep extract","Executive","Finance director",5,30,"Yes","No","Merge","Business performance summary"],[38,"Forecast vs. bookings","Director","Sales operations lead",7,27,"Yes","No","Merge","Pipeline and bookings"],[39,"Weekly flash (v2)","Executive","Finance director",3,26,"No","No","Merge","Business performance summary"],[40,"Ops weekly KPIs","Executive","Operations director",13,24,"No","No","Merge","Operations scorecard"],[41,"Coaching tracker","Manager","Operations manager",9,22,"No","No","Merge","Team performance"],[42,"Spend tracker","Manager","FP&A manager",8,21,"No","No","Merge","Budget vs. actual"],[43,"CEO one-pager","Executive","Finance director",9,21,"No","No","Merge","Business performance summary"],[44,"Price-volume-mix (legacy)","Executive","Finance director",11,19,"No","No","Merge","Sales and margin"],[45,"Backlog summary","Executive","Operations director",8,18,"No","No","Merge","Operations scorecard"],[46,"Sales leaderboard export","Executive","Finance director",5,18,"No","No","Merge","Sales and margin"],[47,"Response times monthly","Director","Operations director",6,17,"Yes","No","Merge","Service levels"],[48,"Productivity by team","Manager","Operations manager",12,16,"No","No","Merge","Team performance"],[49,"Legacy product codes","Analyst","Reporting analyst",2,6,"No","No","Retire",""],[50,"Training hours","Analyst","Reporting analyst",1,6,"No","No","Retire",""],[51,"Q2 promo tracker","Analyst","Reporting analyst",1,5,"No","No","Retire",""],[52,"Pilot program dashboard","Analyst","Reporting analyst",1,5,"No","No","Retire",""],[53,"Channel mix (old)","Director","Sales operations lead",2,5,"No","No","Retire",""],[54,"Expense detail (dup)","Manager","Reporting analyst",2,5,"No","No","Retire",""],[55,"Returns analysis draft","Manager","Reporting analyst",1,5,"No","No","Retire",""],[56,"Inventory aging (copy)","Analyst","Reporting analyst",1,5,"No","No","Retire",""],[57,"Contract renewals (old)","Director","Sales operations lead",1,4,"No","No","Retire",""],[58,"Ad hoc margin cut","Manager","Reporting analyst",2,3,"No","No","Retire",""],[59,"Test dashboard (do not use)","Executive","Finance director",1,3,"No","No","Retire",""],[60,"Store openings 2023","Analyst","Reporting analyst",1,3,"No","No","Retire",""],[61,"Discount audit one-off","Analyst","Reporting analyst",2,3,"No","No","Retire",""],[62,"Board extract 2023","Analyst","Reporting analyst",1,3,"No","No","Retire",""],[63,"Data quality pilot","Analyst","Reporting analyst",1,3,"No","No","Retire",""],[64,"Executive KPIs (copy)","Analyst","Reporting analyst",1,2,"No","No","Retire",""],[65,"Price change impact Q1","Analyst","Reporting analyst",1,2,"No","No","Retire",""],[66,"Headcount snapshot (old)","Director","Sales operations lead",2,2,"No","No","Retire",""],[67,"Call volume (archived)","Analyst","Reporting analyst",2,2,"No","No","Retire",""],[68,"Product launch tracker","Analyst","Reporting analyst",2,1,"No","No","Retire",""],[69,"Old region split (pre-reorg)","Manager","Reporting analyst",0,0,"No","No","Retire",""],[70,"Holiday staffing 2024","Director","Sales operations lead",0,0,"No","No","Retire",""],[71,"Weekly flash (v1)","Analyst","Reporting analyst",0,0,"No","No","Retire",""],[72,"Customer churn draft","Manager","Reporting analyst",0,0,"No","No","Retire",""],[73,"Vendor scorecard (paused)","Manager","Reporting analyst",1,0,"No","No","Retire",""],[74,"Region North (closed)","Executive","Finance director",1,0,"No","No","Retire",""],[75,"Survey results 2023","Analyst","Reporting analyst",0,0,"No","No","Retire",""],[76,"Marketing spend v3","Executive","Finance director",0,0,"No","No","Retire",""],[77,"Onboarding tracker","Manager","Reporting analyst",1,0,"No","No","Retire",""],[78,"Freight cost one-off","Manager","Reporting analyst",0,0,"No","No","Retire",""],[79,"Partner scorecard (old)","Executive","Finance director",2,0,"No","No","Retire",""],[80,"Budget template 2024","Analyst","Reporting analyst",1,0,"No","No","Retire",""]];
+// hero units
+(function(){const u=document.getElementById('units');let h='';for(let k=0;k<80;k++)h+=`<i class="${k<22?'on':''}"></i>`;u.innerHTML=h;})();
+
+// ---------- calculator ----------
+const F=[
+ {id:'n',label:'Reports today',min:10,max:400,step:1,v:80,grp:'Portfolio'},
+ {id:'kept',label:'Reports kept as is',min:0,max:400,step:1,v:14},
+ {id:'merged',label:'Reports merged',min:0,max:400,step:1,v:34},
+ {id:'into',label:'Merged into how many reports',min:0,max:100,step:1,v:8},
+ {id:'shared',label:'Shared source fixes, hrs a week',min:0,max:100,step:1,v:24,grp:'Upkeep'},
+ {id:'rate',label:'Upkeep per report, hrs a week',min:0.1,max:3,step:0.05,v:0.7},
+ {id:'mult',label:'Merged report vs. old report (×)',min:1,max:4,step:0.1,v:2.0},
+ {id:'team',label:'Analysts on the team',min:1,max:40,step:1,v:5,grp:'Team and cost'},
+ {id:'setup',label:'Setup hours for the project',min:0,max:2000,step:10,v:340},
+ {id:'cost',label:'Cost per analyst hour, $ (assumption)',min:20,max:200,step:5,v:60},
+ {id:'weeks',label:'Working weeks a year',min:40,max:52,step:1,v:50}];
+const P={cons:{shared:32,rate:0.6,mult:2.5},base:{shared:24,rate:0.7,mult:2.0},up:{shared:16,rate:0.8,mult:1.5}};
+const box=document.getElementById('inputs');
+box.innerHTML=F.map(f=>`${f.grp?`<p class="grp mono">${f.grp}</p>`:''}<div class="field"><label for="i-${f.id}">${f.label}</label><input type="number" id="i-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}"><input type="range" id="r-${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}" aria-label="${f.label}"></div>`).join('');
+const val=id=>{const x=parseFloat(document.getElementById('i-'+id).value);return isFinite(x)?x:0};
+function setv(id,v){document.getElementById('i-'+id).value=v;document.getElementById('r-'+id).value=v;}
+F.forEach(f=>{const a=document.getElementById('i-'+f.id),b=document.getElementById('r-'+f.id);
+  a.addEventListener('input',()=>{b.value=a.value;mark(null);calc()});b.addEventListener('input',()=>{a.value=b.value;mark(null);calc()});});
+function mark(k){['cons','base','up'].forEach(p=>document.getElementById('p-'+p).setAttribute('aria-pressed',p===k));}
+['cons','base','up'].forEach(p=>document.getElementById('p-'+p).addEventListener('click',()=>{Object.entries(P[p]).forEach(([k,v])=>setv(k,v));mark(p);calc();}));
+const fmt=(x,d=0)=>x.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+function calc(){
+  const n=val('n'),kept=val('kept'),merged=val('merged'),into=val('into'),shared=val('shared'),rate=val('rate'),mult=val('mult'),team=val('team'),setup=val('setup'),cost=val('cost'),weeks=val('weeks');
+  const w=document.getElementById('warn');const msgs=[];
+  if(kept+merged>n)msgs.push('Kept plus merged cannot exceed reports today.');
+  if(into>merged)msgs.push('Merged reports cannot become more reports than were merged.');
+  w.hidden=!msgs.length;w.textContent=msgs.join(' ');
+  const retired=Math.max(0,n-kept-merged), intoEff=Math.min(into,merged);
+  const before=shared+n*rate, after=shared+kept*rate+intoEff*rate*mult, freed=before-after, cap=team*40;
+  document.getElementById('o-freed').textContent=fmt(freed,0);
+  document.getElementById('o-pay').textContent=freed>0?fmt(setup/freed,0)+' wks':'n/a';
+  const v=freed*cost*weeks,av=Math.abs(v),sg=v<0?'−':'';
+  document.getElementById('o-val').textContent=sg+(av>=1e6?'$'+fmt(av/1e6,1)+'M':'$'+fmt(av/1e3,0)+'K');
+  document.getElementById('o-after').textContent=fmt(kept+intoEff);
+  document.getElementById('o-before').textContent=fmt(before,0)+' hrs';
+  document.getElementById('o-afterh').textContent=fmt(after,0)+' hrs';
+  document.getElementById('o-share').textContent=fmt(before/cap*100,0)+'% → '+fmt(after/cap*100,0)+'%';
+  document.getElementById('o-fte').textContent=fmt(Math.max(0,freed)/40,1);
+  document.getElementById('o-ret').textContent=fmt(retired);
+  const mx=Math.max(before,after,1);
+  const row=(lab,s,p,tot)=>`<div class="row"><span>${lab}</span><div class="track"><div style="width:${s/mx*100}%;background:var(--ink)" title="Shared fixes"></div><div style="width:${p/mx*100}%;background:${lab==='After'?'var(--accent)':'var(--sky)'}" title="Per-report upkeep"></div></div><b class="num" style="text-align:right">${fmt(tot,0)} hrs</b></div>`;
+  document.getElementById('cmp').innerHTML=row('Before',shared,n*rate,before)+row('After',shared,after-shared,after)+`<p class="note" style="margin-top:2px">Dark: shared fixes. Light and bright blue: per-report upkeep.</p>`;
+}
+calc();
+
+// ---------- usage curve ----------
+(function(){
+  const pts=[];let c=0;const tot=R.reduce((a,r)=>a+r[5],0);R.forEach(r=>{c+=r[5];pts.push(c/tot)});
+  const W=560,H=360,L=48,Rr=16,T=16,B=46,X=i=>L+(W-L-Rr)*i/80,Y=v=>T+(H-T-B)*(1-v);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative share of views: 9 reports draw half of all views, 25 draw 80%, 24 reports get fewer than 5 views a month">`;
+  s+=`<rect x="${X(56)}" y="${T}" width="${X(80)-X(56)}" height="${H-T-B}" fill="var(--mist)"/>`;
+  [0,.25,.5,.75,1].forEach(v=>{s+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)"/><text x="${L-8}" y="${Y(v)+4}" font-size="12" fill="var(--muted)" text-anchor="end">${v*100}%</text>`});
+  [0,20,40,60,80].forEach(i=>{s+=`<text x="${X(i)}" y="${H-B+18}" font-size="12" fill="var(--muted)" text-anchor="middle">${i}</text>`});
+  s+=`<text x="${(L+W-Rr)/2}" y="${H-8}" font-size="12.5" fill="var(--ink-2)" text-anchor="middle">Reports, ranked from most to least used</text>`;
+  let d=`M${X(0)},${Y(0)}`;pts.forEach((v,i)=>d+=` L${X(i+1).toFixed(1)},${Y(v).toFixed(1)}`);
+  s+=`<path d="${d} L${X(80)},${Y(0)} Z" fill="var(--pale)" opacity=".85"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
+  s+=`<text x="${(X(56)+X(80))/2}" y="${Y(.5)}" font-size="12.5" fill="var(--ink-2)" text-anchor="middle"><tspan x="${(X(56)+X(80))/2}">24 reports</tspan><tspan x="${(X(56)+X(80))/2}" dy="16">under 5 views</tspan><tspan x="${(X(56)+X(80))/2}" dy="16">a month</tspan></text>`;
+  [[9,'9 reports','half of all views',12,null],[25,'25 reports','80% of views',12,34]].forEach(([i,a,b,dx,dy])=>{const v=pts[i-1];
+    s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${Y(v)}" y2="${Y(0)}" stroke="var(--ink)" stroke-dasharray="4 4"/><circle cx="${X(i)}" cy="${Y(v)}" r="5.5" fill="var(--ink)"/>`;
+    const ty=dy===null?T+14:Y(v)+dy;s+=`<text x="${X(i)+dx}" y="${ty}" font-size="13.5" font-weight="600" fill="var(--ink)">${a}</text><text x="${X(i)+dx}" y="${ty+16}" font-size="12.5" fill="var(--ink-2)">${b}</text>`;});
+  document.getElementById('curve').innerHTML=s+'</svg>';
+})();
+
+// ---------- table ----------
+let filt='All',sk=0,sd=1;
+const outcome=r=>r[8]==='Merge'?'Folded into '+r[9]:r[8]==='Retire'?'Archived 60 days':'Standard template';
+function draw(){
+  const rows=R.filter(r=>filt==='All'||r[8]===filt).slice().sort((a,b)=>{const x=a[sk],y=b[sk];return (typeof x==='number'?x-y:String(x).localeCompare(String(y)))*sd});
+  document.querySelector('#tbl tbody').innerHTML=rows.map(r=>`<tr><td class="r num">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="r num">${r[4]}</td><td class="r num">${r[5]}</td><td><span class="pill ${r[8]}">${r[8]}</span></td><td>${outcome(r)}</td></tr>`).join('');
+}
+const counts={All:R.length};R.forEach(r=>counts[r[8]]=(counts[r[8]]||0)+1);
+const ch=document.getElementById('chips');
+ch.innerHTML=['All','Keep','Merge','Retire'].map(k=>`<button type="button" data-f="${k}" aria-pressed="${k==='All'}">${k} · ${counts[k]}</button>`).join('');
+ch.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;filt=b.dataset.f;ch.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();});
+document.querySelectorAll('#tbl th').forEach(th=>th.addEventListener('click',()=>{const k=+th.dataset.k;sd=(sk===k)?-sd:1;sk=k;document.querySelectorAll('#tbl th').forEach(t=>t.removeAttribute('aria-sort'));th.setAttribute('aria-sort',sd>0?'ascending':'descending');draw();}));
+draw();
+
+// ---------- catalog ----------
+(function(){const lv=['Executive','Director','Manager','Analyst'],lab={Executive:'Executives',Director:'Directors',Manager:'Managers',Analyst:'Analysts'};
+  const fin={};R.forEach(r=>{if(r[8]!=='Retire'){(fin[r[2]]=fin[r[2]]||new Set()).add(r[9])}});
+  document.getElementById('catalog').innerHTML=lv.map(l=>{const s=[...(fin[l]||[])];return `<div class="cat-row lv-${l}"><h3>${lab[l]} <span>· ${s.length}</span></h3><div class="cat-chips">${s.map(x=>`<span>${x}</span>`).join('')}</div></div>`}).join('');})();
+
+// ---------- download ----------
+document.getElementById('dl').addEventListener('click',async e=>{
+  const msg=document.getElementById('dlmsg');
+  if(!window.claude)return; // plain hosting: the normal link downloads the file
+  e.preventDefault();msg.textContent='Preparing the file…';
+  try{const dl=await window.claude.use('downloads');
+    if(!dl){msg.textContent='Downloads are not available in this view.';return;}
+    const bin=atob(XLSX_B64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    await dl.save({filename:'Report_Review_Scorecard.xlsx',data:bytes});msg.textContent='Saved.';
+  }catch(err){msg.textContent=err&&err.code==='declined'?'Download cancelled.':'The download did not complete. Please try again.';}
+});
+// ---------- copy email ----------
+document.getElementById('copy').addEventListener('click',async e=>{const b=e.currentTarget,t=document.getElementById('email').textContent;
+  try{await navigator.clipboard.writeText(t);b.textContent='Copied';}catch(_){const r=document.createRange();r.selectNodeContents(document.getElementById('email'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected, press Ctrl+C';}
+  setTimeout(()=>b.textContent='Copy email',1800);});
+</script>
+
+</body></html>
