@@ -387,7 +387,7 @@ function setv(id,v){document.getElementById('i-'+id).value=v;document.getElement
 F.forEach(f=>{const a=document.getElementById('i-'+f.id),b=document.getElementById('r-'+f.id);
   a.addEventListener('input',()=>{b.value=a.value;mark(null);calc()});b.addEventListener('input',()=>{a.value=b.value;mark(null);calc()});});
 function mark(k){['cons','base','up'].forEach(p=>document.getElementById('p-'+p).setAttribute('aria-pressed',p===k));}
-['cons','base','up'].forEach(p=>document.getElementById('p-'+p).addEventListener('click',()=>{Object.entries(P[p]).forEach(([k,v])=>setv(k,v));mark(p);calc();}));
+['cons','base','up'].forEach(p=>document.getElementById('p-'+p).addEventListener('click',()=>{F.forEach(f=>setv(f.id,f.v));Object.entries(P[p]).forEach(([k,v])=>setv(k,v));mark(p);calc();}));
 const fmt=(x,d=0)=>x.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
 const MINUS='−';
 function fh(x){const d=Math.abs(x)<10?1:0,r=Number(x.toFixed(d));if(r===0)return '0';return (r<0?MINUS:'')+fmt(Math.abs(r),d);}
