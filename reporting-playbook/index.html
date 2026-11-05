@@ -58,6 +58,7 @@ a{color:var(--accent-text)}
 .btn.primary{background:var(--accent);color:var(--on-accent)}
 .btn.ghost{border-color:#5B6AB0;color:var(--hero-ink);background:transparent}
 .btn.dark{background:var(--ink);color:var(--bg)}
+.btn.outline{border-color:var(--ink);color:var(--ink);background:transparent}
 .units{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:5px;max-width:460px}
 .units i{display:block;aspect-ratio:1;border:1.5px solid #3A4280}
 .units i.on{background:#2B47F0;border-color:#2B47F0}
@@ -300,9 +301,9 @@ footer .wrap{padding-block:22px 40px;font-size:13.5px;color:var(--muted);display
   <div class="exh"><span><b>EXHIBIT 4</b>Report inventory and decisions</span><span class="tag mono">Illustrative</span></div>
   <div class="chips" role="group" aria-label="Filter by decision" id="chips"></div>
   <div class="tablebox"><table id="tbl"><thead><tr>
-    <th data-k="0" class="r" aria-sort="ascending">Rank</th><th data-k="1">Report</th><th data-k="2">Level</th><th data-k="3">Owner</th><th data-k="4" class="r">Users, 90 days</th><th data-k="5" class="r">Views / month</th><th data-k="8">Decision</th><th data-k="9">Outcome</th>
+    <th data-k="0" class="r" aria-sort="ascending">Rank</th><th data-k="1">Report</th><th data-k="2">Level</th><th data-k="3">Owner</th><th data-k="4" class="r">Users, 90 days</th><th data-k="5" class="r">Avg views / month</th><th data-k="8">Decision</th><th data-k="9">Outcome</th>
   </tr></thead><tbody></tbody></table></div>
-  <p class="note">Views count interactive use by named users over 90 days. Scheduled distributions and service accounts are excluded and reviewed separately. Click a column to sort.</p>
+  <p class="note">Users and views cover the last 90 days; views are a monthly average of interactive use by named users. Scheduled distributions and service accounts are excluded and reviewed separately. Click a column to sort.</p>
 </section>
 
 <section class="block" id="rules">
@@ -325,18 +326,18 @@ footer .wrap{padding-block:22px 40px;font-size:13.5px;color:var(--muted);display
   <h2>Score your own reports</h2>
   <div class="dl">
     <div>
-      <p style="color:var(--ink-2)">An Excel scorecard that applies the same rules to your report list and estimates the hours you free up. Works in Excel, Google Sheets and Numbers.</p>
-      <ul><li>Report review: room for 300 reports, a suggested action that fills in automatically, and an owner-approval column. Incomplete rows are flagged, never counted.</li><li>Summary: potential savings from every suggestion, and approved savings from owner-approved actions only</li><li>Worked example: the 80 reports on this page, already scored, with its own fixed assumptions</li></ul>
-      <div class="ctas"><a class="btn dark" id="dl" href="Report_Review_Scorecard.xlsx" download>Download the scorecard (.xlsx)</a></div>
+      <p style="color:var(--ink-2)">An Excel scorecard that applies the same rules to your report list and estimates the hours you free up. Built for Excel, with plain formulas and no macros.</p>
+      <ul><li>Report review: room for 300 reports, a suggested action that fills in automatically, and an owner-approval column. Incomplete rows are flagged and counted as kept, with no savings.</li><li>Summary: potential savings from every suggestion, and approved savings from owner-approved actions only</li><li>Worked example: the 80 reports on this page, already scored, with its own fixed assumptions</li></ul>
+      <div class="ctas"><a class="btn dark" id="dl" href="Report_Review_Scorecard.xlsx" download>Download the scorecard (.xlsx)</a><a class="btn outline" href="Tony_Alunni_Reporting_Playbook.pdf" target="_blank" rel="noopener">View the 10-slide summary (PDF)</a></div>
       <p class="dlmsg" id="dlmsg"></p>
     </div>
     <div class="sheet" aria-hidden="true">
       <div class="h"><span>Report</span><span>Users</span><span>Views</span><span>Action</span></div>
       <div class="r"><span>Inventory</span><span>32</span><span>312</span><span style="color:var(--accent-text)">Keep</span></div>
-      <div class="r"><span>Weekly flash (v2)</span><span>9</span><span>41</span><span>Merge</span></div>
-      <div class="r"><span>Q2 promo tracker</span><span>1</span><span>3</span><span style="color:var(--muted)">Retire</span></div>
+      <div class="r"><span>Weekly flash (v2)</span><span>3</span><span>26</span><span>Merge</span></div>
+      <div class="r"><span>Q2 promo tracker</span><span>1</span><span>5</span><span style="color:var(--muted)">Retire</span></div>
       <div class="r"><span>Freight cost one-off</span><span>0</span><span>0</span><span style="color:var(--muted)">Retire</span></div>
-      <div class="r"><span>SLA tracker</span><span>7</span><span>28</span><span>Merge</span></div>
+      <div class="r"><span>SLA tracker</span><span>11</span><span>43</span><span>Merge</span></div>
     </div>
   </div>
 </section>
