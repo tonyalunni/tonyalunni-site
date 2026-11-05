@@ -117,7 +117,7 @@ section.block h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;max-width:820
 .cmp{margin-top:22px;display:grid;gap:10px}
 .cmp .row{display:grid;grid-template-columns:62px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:14px}
 .cmp .track{display:flex;height:26px;background:var(--bg)}
-.cmp .track div{height:100%}
+.cmp .track div{height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;overflow:hidden;white-space:nowrap}
 .facts{margin-top:20px;border-top:1px solid var(--rule);display:grid}
 .facts div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:15px}
 .facts span{color:var(--ink-2)}
@@ -408,7 +408,8 @@ function calc(){
   document.getElementById('o-fte').textContent=fmt(Math.max(0,freed)/40,1);
   document.getElementById('o-ret').textContent=fmt(retired);
   const mx=Math.max(before,after,1);
-  const row=(lab,s,p,tot)=>`<div class="row"><span>${lab}</span><div class="track"><div style="width:${s/mx*100}%;background:var(--ink)" title="Shared fixes"></div><div style="width:${p/mx*100}%;background:${lab==='After'?'var(--accent)':'var(--sky)'}" title="Per-report upkeep"></div></div><b class="num" style="text-align:right">${fmt(tot,0)} hrs</b></div>`;
+  const lb=(x)=>x/mx>=0.08?fmt(x,0):'';
+  const row=(lab,s,p,tot)=>`<div class="row"><span>${lab}</span><div class="track"><div style="width:${s/mx*100}%;background:var(--ink);color:#fff" title="Shared fixes: ${fmt(s,1)} hrs">${lb(s)}</div><div style="width:${p/mx*100}%;background:${lab==='After'?'var(--accent)':'var(--sky)'};color:${lab==='After'?'#fff':'var(--ink)'}" title="Per-report upkeep: ${fmt(p,1)} hrs">${lb(p)}</div></div><b class="num" style="text-align:right">${fmt(tot,0)} hrs</b></div>`;
   document.getElementById('cmp').innerHTML=row('Before',shared,n*rate,before)+row('After',shared,after-shared,after)+`<p class="note" style="margin-top:2px">Dark: shared fixes. Light and bright blue: per-report upkeep.</p>`;
 }
 calc();
