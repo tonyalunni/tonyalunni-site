@@ -279,7 +279,7 @@ footer .wrap{padding-block:22px 40px;font-size:13.5px;color:var(--muted);display
         <div><span>Analyst equivalents freed</span><b class="num" id="o-fte">0.9</b></div>
         <div><span>Reports retired</span><b class="num" id="o-ret">32</b></div>
       </div>
-      <p class="note">Capacity, not cash: freed hours go to analysis, not a budget cut. Payback counts weeks after launch to repay setup hours, excluding the project itself.</p>
+      <p class="note">Capacity, not cash: freed hours are capacity available to redeploy, not a budget cut. Merged-into reports are new combined reports, counted separately from the ones kept as is. Payback counts weeks after launch to repay setup hours, excluding the project itself.</p>
     </div>
   </div>
 </section>
@@ -389,28 +389,48 @@ F.forEach(f=>{const a=document.getElementById('i-'+f.id),b=document.getElementBy
 function mark(k){['cons','base','up'].forEach(p=>document.getElementById('p-'+p).setAttribute('aria-pressed',p===k));}
 ['cons','base','up'].forEach(p=>document.getElementById('p-'+p).addEventListener('click',()=>{Object.entries(P[p]).forEach(([k,v])=>setv(k,v));mark(p);calc();}));
 const fmt=(x,d=0)=>x.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+const MINUS='−';
+function fh(x){const d=Math.abs(x)<10?1:0,r=Number(x.toFixed(d));if(r===0)return '0';return (r<0?MINUS:'')+fmt(Math.abs(r),d);}
+function money(v){const av=Math.abs(v);let s;if(av<1000)s='$'+fmt(av,0);else if(av<1e6)s='$'+fmt(av/1e3,0)+'K';else s='$'+fmt(av/1e6,1)+'M';return (v<0&&s!=='$0'?MINUS:'')+s;}
+const INT=['n','kept','merged','into','team','weeks'];
+const OUT=['o-freed','o-pay','o-val','o-after','o-before','o-afterh','o-share','o-fte','o-ret'];
 function calc(){
-  const n=val('n'),kept=val('kept'),merged=val('merged'),into=val('into'),shared=val('shared'),rate=val('rate'),mult=val('mult'),team=val('team'),setup=val('setup'),cost=val('cost'),weeks=val('weeks');
-  const w=document.getElementById('warn');const msgs=[];
-  if(kept+merged>n)msgs.push('Kept plus merged cannot exceed reports today.');
-  if(into>merged)msgs.push('Merged reports cannot become more reports than were merged.');
-  w.hidden=!msgs.length;w.textContent=msgs.join(' ');
-  const retired=Math.max(0,n-kept-merged), intoEff=Math.min(into,merged);
-  const before=shared+n*rate, after=shared+kept*rate+intoEff*rate*mult, freed=before-after, cap=team*40;
-  document.getElementById('o-freed').textContent=fmt(freed,0);
-  document.getElementById('o-pay').textContent=freed>0?fmt(setup/freed,0)+' wks':'n/a';
-  const v=freed*cost*weeks,av=Math.abs(v),sg=v<0?'−':'';
-  document.getElementById('o-val').textContent=sg+(av>=1e6?'$'+fmt(av/1e6,1)+'M':'$'+fmt(av/1e3,0)+'K');
-  document.getElementById('o-after').textContent=fmt(kept+intoEff);
-  document.getElementById('o-before').textContent=fmt(before,0)+' hrs';
-  document.getElementById('o-afterh').textContent=fmt(after,0)+' hrs';
+  const raw={},msgs=[];
+  F.forEach(f=>{const s=document.getElementById('i-'+f.id).value.trim(),x=s===''?NaN:Number(s);raw[f.id]=x;
+    if(!isFinite(x))msgs.push(`Enter a number for "${f.label}".`);
+    else if(x<f.min||x>f.max)msgs.push(`"${f.label}" must be between ${f.min} and ${f.max}.`);
+    else if(INT.includes(f.id)&&!Number.isInteger(x))msgs.push(`"${f.label}" must be a whole number.`);});
+  const {n,kept,merged,into,shared,rate,mult,team,setup,cost,weeks}=raw;
+  if(!msgs.length){
+    if(kept+merged>n)msgs.push('Kept plus merged cannot exceed reports today.');
+    if(into>merged)msgs.push('Merged into cannot be more than the number of reports merged.');
+    if(merged>0&&into<1)msgs.push('Merged reports need at least one report to merge into.');
+  }
+  const w=document.getElementById('warn');w.hidden=!msgs.length;w.textContent=msgs.join(' ');
+  if(msgs.length){
+    OUT.forEach(id=>document.getElementById(id).textContent='–');
+    document.getElementById('cmp').innerHTML=`<p class="warn" style="margin-top:0">Results are hidden until the inputs are fixed: ${msgs.join(' ')}</p>`;
+    return;
+  }
+  const retired=n-kept-merged;
+  const before=shared+n*rate, after=shared+kept*rate+into*rate*mult, freed=before-after, cap=team*40;
+  document.getElementById('o-freed').textContent=fh(freed);
+  const pay=freed>=0.05?setup/freed:null;
+  document.getElementById('o-pay').textContent=pay===null?'n/a':(pay>=1000?'1,000+ wks':fmt(pay,pay<10?1:0)+' wks');
+  document.getElementById('o-val').textContent=money(freed*cost*weeks);
+  document.getElementById('o-after').textContent=fmt(kept+into);
+  document.getElementById('o-before').textContent=fh(before)+' hrs';
+  document.getElementById('o-afterh').textContent=fh(after)+' hrs';
   document.getElementById('o-share').textContent=fmt(before/cap*100,0)+'% → '+fmt(after/cap*100,0)+'%';
-  document.getElementById('o-fte').textContent=fmt(Math.max(0,freed)/40,1);
+  document.getElementById('o-fte').textContent=fh(freed/40);
   document.getElementById('o-ret').textContent=fmt(retired);
   const mx=Math.max(before,after,1);
   const lb=(x)=>x/mx>=0.08?fmt(x,0):'';
-  const row=(lab,s,p,tot)=>`<div class="row"><span>${lab}</span><div class="track"><div style="width:${s/mx*100}%;background:var(--ink);color:#fff" title="Shared fixes: ${fmt(s,1)} hrs">${lb(s)}</div><div style="width:${p/mx*100}%;background:${lab==='After'?'var(--accent)':'var(--sky)'};color:${lab==='After'?'#fff':'var(--ink)'}" title="Per-report upkeep: ${fmt(p,1)} hrs">${lb(p)}</div></div><b class="num" style="text-align:right">${fmt(tot,0)} hrs</b></div>`;
-  document.getElementById('cmp').innerHTML=row('Before',shared,n*rate,before)+row('After',shared,after-shared,after)+`<p class="note" style="margin-top:2px">Dark: shared fixes. Light and bright blue: per-report upkeep.</p>`;
+  const row=(lab,s,p,tot)=>`<div class="row"><span>${lab}</span><div class="track"><div style="width:${s/mx*100}%;background:var(--ink);color:#fff" title="Shared fixes: ${fmt(s,1)} hrs">${lb(s)}</div><div style="width:${p/mx*100}%;background:${lab==='After'?'var(--accent)':'var(--sky)'};color:${lab==='After'?'#fff':'var(--ink)'}" title="Per-report upkeep: ${fmt(p,1)} hrs">${lb(p)}</div></div><b class="num" style="text-align:right">${fh(tot)} hrs</b></div>`;
+  const info=[];
+  if(freed<=-0.05)info.push(`Upkeep goes up under these inputs: the team would need about ${fh(-freed)} more hours a week.`);
+  if(before>cap||after>cap)info.push('Modeled upkeep exceeds scheduled team capacity. Check the assumptions.');
+  document.getElementById('cmp').innerHTML=row('Before',shared,n*rate,before)+row('After',shared,after-shared,after)+`<p class="note" style="margin-top:2px">Dark: shared fixes. Light and bright blue: per-report upkeep.</p>`+(info.length?`<p class="warn" style="margin-top:2px">${info.join(' ')}</p>`:'');
 }
 calc();
 
